@@ -983,6 +983,8 @@
                         // Wyślij webhooka przy pierwszym otwarciu (tylko raz na dany chatId)
                         const webhookSentKey = `welcomeWebhookSentFor_${userChatId}`;
                         if (localStorage.getItem(webhookSentKey) !== 'true') {
+                            const typingIndicator = displayMessage('', 'bot', true);
+
                             fetch('https://growing-oarfish-grossly.ngrok-free.app/webhook/nowa-wiadomosc', {
                                 method: 'POST',
                                 headers: {
@@ -995,22 +997,28 @@
                             })
                             .then(response => {
                                 if (!response.ok) {
-                                    throw new Error('Network response was not ok');
+                                    throw new Error(`Network response was not ok: ${response.statusText}`);
                                 }
                                 return response.json();
                             })
                             .then(data => {
                                 console.log('Otrzymano odpowiedź z serwera:', data);
-                                if (data && data.respond) {
-                                    displayMessage(data.respond, 'bot');
+                                const messageContent = typingIndicator.querySelector('.bot-message-content');
+                                if (messageContent) {
+                                    // Formatowanie JSON do czytelnej postaci wewnątrz bloku <pre>
+                                    messageContent.innerHTML = `<pre class="text-sm">${JSON.stringify(data, null, 2)}</pre>`;
+                                    typingIndicator.classList.remove('typing'); // Usuń klasę 'typing' jeśli istnieje
                                 }
                             })
                             .catch(error => {
                                 console.error('Webhook error:', error);
-                                displayMessage('Przepraszam, wystąpił błąd. Spróbuj ponownie później.', 'bot');
+                                const messageContent = typingIndicator.querySelector('.bot-message-content');
+                                if (messageContent) {
+                                    messageContent.innerHTML = `<p>Przepraszam, wystąpił błąd: ${error.message}</p>`;
+                                    typingIndicator.classList.remove('typing');
+                                }
                             });
 
-                            // Oznacz w pamięci, że webhook dla tego chatId został wysłany
                             localStorage.setItem(webhookSentKey, 'true');
                         }
 
