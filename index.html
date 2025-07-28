@@ -965,7 +965,7 @@
             const chatMessages = document.getElementById('chat-messages');
             const chatInput = document.getElementById('chat-input');
             const chatSendButton = document.getElementById('chat-send-button');
-            let welcomeMessageSent = false; // Flaga, aby wiadomość powitalna pojawiła się tylko raz
+
 
 
 
@@ -980,8 +980,9 @@
                         chatContainer.classList.add('active');
                         openChatButton.classList.add('hidden-button');
 
-                        // Wyślij webhooka przy pierwszym otwarciu i obsłuż odpowiedź
-                        if (!welcomeMessageSent) {
+                        // Wyślij webhooka przy pierwszym otwarciu (tylko raz na dany chatId)
+                        const webhookSentKey = `welcomeWebhookSentFor_${userChatId}`;
+                        if (localStorage.getItem(webhookSentKey) !== 'true') {
                             fetch('https://growing-oarfish-grossly.ngrok-free.app/webhook/nowa-wiadomosc', {
                                 method: 'POST',
                                 headers: {
@@ -999,20 +1000,18 @@
                                 return response.json();
                             })
                             .then(data => {
-                                console.log('Otrzymano odpowiedź z serwera:', data); // Logowanie całej odpowiedzi
+                                console.log('Otrzymano odpowiedź z serwera:', data);
                                 if (data && data.message) {
-                                    console.log('Wyświetlanie wiadomości:', data.message); // Logowanie przed wyświetleniem
                                     displayMessage(data.message, 'bot');
-                                } else {
-                                    console.log('Odpowiedź nie zawiera klucza "message".');
                                 }
                             })
                             .catch(error => {
                                 console.error('Webhook error:', error);
                                 displayMessage('Przepraszam, wystąpił błąd. Spróbuj ponownie później.', 'bot');
                             });
-                            
-                            welcomeMessageSent = true;
+
+                            // Oznacz w pamięci, że webhook dla tego chatId został wysłany
+                            localStorage.setItem(webhookSentKey, 'true');
                         }
 
                      }, 10);
@@ -1352,11 +1351,11 @@
         </div>
     </div>
     <script>
-        // Generowanie lub pobieranie unikalnego ID czatu użytkownika z sessionStorage
-        let userChatId = sessionStorage.getItem('userChatId');
+        // Generowanie lub pobieranie unikalnego ID czatu użytkownika z pamięci podręcznej (localStorage)
+        let userChatId = localStorage.getItem('userChatId');
         if (!userChatId) {
             userChatId = [...Array(16)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
-            sessionStorage.setItem('userChatId', userChatId);
+            localStorage.setItem('userChatId', userChatId);
         }
 
         document.addEventListener('DOMContentLoaded', function() {
