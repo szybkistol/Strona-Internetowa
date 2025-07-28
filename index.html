@@ -967,8 +967,7 @@
             const chatSendButton = document.getElementById('chat-send-button');
             let welcomeMessageSent = false; // Flaga, aby wiadomość powitalna pojawiła się tylko raz
 
-            // Generowanie unikalnego ID czatu użytkownika
-            const userChatId = [...Array(16)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+
 
             const toggleChat = (forceClose = false) => {
                 const isActive = chatContainer.classList.contains('active');
@@ -980,15 +979,43 @@
                     setTimeout(() => {
                         chatContainer.classList.add('active');
                         openChatButton.classList.add('hidden-button');
-                        
-                        // Wyświetl wiadomość powitalną tylko przy pierwszym otwarciu
+
+                        // Wyślij webhooka przy pierwszym otwarciu i obsłuż odpowiedź
                         if (!welcomeMessageSent) {
-                            setTimeout(() => {
-                                displayMessage("Cześć! jestem twoim wirtualnym asystentem strony AutoBiz. W czym mogę ci pomóc?", 'bot');
-                                welcomeMessageSent = true;
-                            }, 300); // Opóźnienie dla płynniejszego efektu
+                            fetch('https://growing-oarfish-grossly.ngrok-free.app/webhook/nowa-wiadomosc', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    event: 'chatbot_opened_first_time',
+                                    chat_id: userChatId
+                                })
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log('Otrzymano odpowiedź z serwera:', data); // Logowanie całej odpowiedzi
+                                if (data && data.message) {
+                                    console.log('Wyświetlanie wiadomości:', data.message); // Logowanie przed wyświetleniem
+                                    displayMessage(data.message, 'bot');
+                                } else {
+                                    console.log('Odpowiedź nie zawiera klucza "message".');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Webhook error:', error);
+                                displayMessage('Przepraszam, wystąpił błąd. Spróbuj ponownie później.', 'bot');
+                            });
+                            
+                            welcomeMessageSent = true;
                         }
-                    }, 10);
+
+                     }, 10);
                 }
             };
 
@@ -1325,6 +1352,13 @@
         </div>
     </div>
     <script>
+        // Generowanie lub pobieranie unikalnego ID czatu użytkownika z sessionStorage
+        let userChatId = sessionStorage.getItem('userChatId');
+        if (!userChatId) {
+            userChatId = [...Array(16)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+            sessionStorage.setItem('userChatId', userChatId);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // --- KONFIGURACJA PRZEWIJANIA ---
             // Domyślna wartość offsetu, jeśli link nie ma własnej.
