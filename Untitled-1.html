@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="pl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automatyzacja Procesów | AutoBiznes</title>
+    <meta name="description" content="Strona internetowa Oszczędzaj Czas - Automatyzacja Procesów Biznesowych. Zwiększ efektywność i zredukuj koszty dzięki nowoczesnym rozwiązaniom AI.">
+    
+    <!-- Skrypt zapobiegający FOUC (białemu błyskowi) -->
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Konfiguracja kolorów
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        // Tryb Jasny
+                        'light-bg': '#F8F9FA',
+                        'light-surface': '#FFFFFF',
+                        'light-text-head': '#1F2937', // Fallback
+                        'light-text-body': '#4B5563',
+                        // Tryb Ciemny
+                        'dark-bg': '#111827',
+                        'dark-surface': '#1F2937',
+                        'dark-text-head': '#F9FAFB',
+                        'dark-text-body': '#9CA3AF',
+                        // Kolory Marki
+                        'brand-primary': '#4F46E5',
+                        'brand-primary-dark': '#4F46E5',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* TŁO INTERAKTYWNE */
+    #interactive-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+    }
+    
+    .gradient-text {
+        background: linear-gradient(120deg, #A855F7, #4F46E5); /* Fiolet -> Granat */
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        background-attachment: fixed; /* Kluczowa właściwość dla tego efektu */
+    }
+
+    .card-lift-shadow {
+        position: relative; /* Niezbędne dla pseudoelementu */
+        z-index: 1;
+        transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+    }
+
+
+
+    .special-gradient-border::before {
+        background: linear-gradient(135deg, #34D399, #3B82F6);
+    }
+
+    /* Nowy gradient dla tekstu wewnątrz specjalnego kafelka */
+    .special-gradient-border .gradient-text {
+        background: linear-gradient(90deg, #34D399, #3B82F6);
+        -webkit-background-clip: text;
+        background-clip: text;
+    }
+
+    .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    .interactive-lift {
+        transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;
+    }
+
+    .hover-lift {
+        transition: transform 0.2s ease-out;
+    }
+    .hover-lift:hover {
+        transform: translateY(-5px);
+    }
+
+
+    .card-lift-shadow {
+        transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+    }
+    .card-lift-shadow:hover {
+        transform: translateY(-5px);
+        box-shadow: none; /* Usunięto fioletową poświatę */
+    }
+
+    .tab-button {
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+    /* Style dla formularza kontaktowego */
+    .form-input {
+        background-color: #FFFFFF; /* Jasne tło w trybie jasnym */
+        border: 1px solid #D1D5DB; /* Widoczna, szara ramka */
+        transition: all 0.3s ease;
+    }
+    .dark .form-input {
+        background-color: #1F2937; /* Ciemne tło w trybie ciemnym */
+        border: 1px solid #4B5563; /* Widoczna, ciemniejsza ramka */
+    }
+    .form-input:focus {
+        outline: none;
+        border-color: transparent;
+        --tw-ring-color: rgba(var(--color-brand-primary-rgb), 0.5);
+        --tw-ring-offset-shadow: 0 0 #0000;
+        --tw-ring-shadow: 0 0 0 2px var(--tw-ring-color);
+        box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000) !important;
+    }
+
+    .gradient-button {
+        background: transparent;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .gradient-button:hover {
+        transform: scale(1.03);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Subtelny, neutralny cień */
+    }
+
+    .glowing-border:hover {
+        box-shadow: none; /* Usunięto fioletową poświatę */
+    }
+
+    #contact-modal-content {
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1); /* Standardowy cień */
+    }
+
+    /* Style dla logotypów technologii */
+    .dark .tech-logo {
+        filter: invert(1) grayscale(1) brightness(2);
+    }
+
+    /* Style dla nowej sekcji Oferta */
+    .tab-button-new {
+        padding: 1rem 1.5rem;
+        font-size: 1.125rem; /* text-lg */
+        font-weight: 500;
+        color: #4B5563; /* dark:text-dark-text-body */
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px; /* Aby podkreślenie nachodziło na główną linię */
+        transition: all 0.3s ease;
+    }
+    .tab-button-new:not(.active):hover {
+        color: #1F2937; /* light-text-head */
+        border-bottom-color: #D1D5DB; /* gray-300 */
+    }
+
+    /* Domyślny (jasny) tryb dla aktywnego przycisku */
+    .tab-button-new.active {
+        background-color: #4F46E5; /* Kolor marki (brand-primary) */
+        color: #F9FAFB; /* Jasny tekst (dark-text-head) */
+        border-bottom-color: transparent;
+        border-top-left-radius: 0.375rem; /* rounded-t-md */
+        border-top-right-radius: 0.375rem; /* rounded-t-md */
+    }
+
+    /* Tryb ciemny dla aktywnego przycisku */
+    .dark .tab-button-new.active {
+        background-color: transparent;
+        color: white;
+        border-bottom-color: #A855F7; /* Fioletowy */
+    }
+
+    /* Style dla trybu ciemnego */
+    .dark .tab-button-new {
+        color: #9CA3AF; /* Ciemnoszary tekst */
+    }
+
+    .dark .tab-button-new:not(.active):hover {
+        color: #E5E7EB; /* Jaśniejszy szary */
+        border-bottom-color: #4B5563;
+    }
+
+    #tab-content-new {
+        position: relative;
+        transition: height 0.35s ease-in-out;
+    }
+
+    .tab-pane-new {
+        display: grid;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        opacity: 0;
+        transition: opacity 0.4s ease-in-out;
+        pointer-events: none; /* Zapobiega interakcji z ukrytymi panelami */
+    }
+
+    .tab-pane-new.active {
+        opacity: 1;
+        pointer-events: auto;
+        position: relative; /* Kluczowe: przywraca panel do normalnego przepływu, umożliwiając pomiar wysokości */
+    }
+
+    /* Style dla kart w zakładkach - Domyślny (jasny) tryb */
+    .tab-card {
+        background-color: #FFFFFF; /* light-surface */
+        border: 1px solid #E5E7EB; /* gray-200 */
+        border-radius: 0.75rem; /* rounded-lg */
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .tab-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Style dla kart w zakładkach - Tryb ciemny */
+    .dark .tab-card {
+        background-color: #1F2937; /* dark-surface */
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .dark .tab-card:hover {
+        transform: translateY(-4px);
+        box-shadow: none;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tab-button.active {
+        background: linear-gradient(135deg, #F97316, #D946EF, #8B5CF6);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        border-image-source: linear-gradient(135deg, #F97316, #D946EF, #8B5CF6);
+        border-image-slice: 1;
+    }
+
+    .dark .tab-button.active {
+        color: #4F46E5; /* Niebieski tekst dla trybu ciemnego */
+        border-color: #4F46E5; /* Niebieskie obramowanie dla trybu ciemnego */
+        background-color: transparent;
+    }
+
+    .tab-pane {
+        display: none;
+        opacity: 0;
+        transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+        transform: translateY(10px);
+    }
+    .tab-pane.active {
+        display: grid;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* --- Style dla Chatbota --- */
+    #chat-widget-container {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        z-index: 1000;
+    }
+
+    #chat-container {
+        position: fixed;
+        bottom: 100px; 
+        right: 20px;
+        width: 400px; 
+        max-width: 90vw;
+        z-index: 1000;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+        transform: translateY(20px) scale(0.95);
+        opacity: 0;
+        visibility: hidden;
+        transition: transform 0.3s ease-out, opacity 0.3s ease-out, visibility 0.3s;
+    }
+
+    .chat-bg-blur {
+        background-color: rgba(255, 255, 255, 0.7);
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+    }
+
+    .dark .chat-bg-blur {
+        background-color: rgba(30, 41, 59, 0.7);
+    }
+
+    #chat-container.active {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        visibility: visible;
+    }
+
+    #chat-open-button {
+        transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    #chat-open-button.hidden-button {
+         transform: scale(0);
+         opacity: 0;
+    }
+
+    #chat-messages::-webkit-scrollbar {
+        width: 6px;
+    }
+    #chat-messages::-webkit-scrollbar-thumb {
+        background-color: #4F46E5;
+        border-radius: 3px;
+    }
+    #chat-messages::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    /* --- POCZĄTEK STYLÓW DLA MODALA (EXPANDING CARD) --- */
+    #project-modal {
+        background-color: rgba(0, 0, 0, 0.7);
+        transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    #modal-content-container {
+        position: fixed; /* Pozycjonowanie względem okna przeglądarki */
+        transform-origin: top left;
+        transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1), height 0.35s cubic-bezier(0.4, 0, 0.2, 1), top 0.35s cubic-bezier(0.4, 0, 0.2, 1), left 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-out;
+        will-change: transform, opacity; /* Optymalizacja animacji */
+        overflow: hidden; /* Zapobiega "wylewaniu" się treści */
+        z-index: 101; /* Upewniamy się, że modal jest na wierzchu */
+    }
+
+    #modal-content-container .modal-scrollable-content {
+        opacity: 0;
+        transition: opacity 0.2s 0.1s ease-in-out; /* Opóźnione pojawienie się treści */
+        overflow-y: auto; /* Włączamy pionowe przewijanie */
+        max-height: 70vh; /* Ograniczamy maksymalną wysokość do 70% wysokości okna */
+        padding-right: 1rem; /* Dodajemy trochę miejsca na pasek przewijania */
+    }
+
+    #project-modal.visible #modal-content-container .modal-scrollable-content,
+    #contact-modal.visible #contact-modal-content {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+
+    /* Nowe, precyzyjne style dla modalu kontaktowego */
+    #contact-modal {
+        transition: background-color 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    }
+    #contact-modal-content {
+        transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    #contact-modal.visible {
+        opacity: 1;
+    }
+    #contact-modal.visible #contact-modal-content {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    /* Styl dla wskaźnika pisania bota */
+    .typing-indicator span {
+        height: 8px;
+        width: 8px;
+        background-color: #9CA3AF; /* Kolor kropek */
+        border-radius: 50%;
+        display: inline-block;
+        animation: bounce 1.4s infinite ease-in-out both;
+    }
+    .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+    .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes bounce {
+        0%, 80%, 100% { transform: scale(0); }
+        40% { transform: scale(1.0); }
+    }
+    </style>
+</head>
+<body class="bg-light-bg text-light-text-body dark:bg-dark-bg dark:text-dark-text-body antialiased transition-colors duration-300">
+
+    <!-- Canvas dla interaktywnego tła -->
+    <canvas id="interactive-bg"></canvas>
+
+    <!-- Nagłówek i Nawigacja -->
+    <header id="header" class="bg-light-surface/30 dark:bg-dark-surface/30 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="#hero" class="text-2xl font-extrabold">
+                <span class="gradient-text">AutoBiz</span><span class="text-brand-primary dark:text-brand-primary-dark"></span>
+            </a>
+            
+            <div class="flex items-center space-x-8">
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="#oferta" class="text-light-text-body hover:text-brand-primary dark:text-dark-text-body dark:hover:text-brand-primary-dark font-medium transition" data-scroll-offset="120">Dla kogo?</a>
+                    <a href="#dlaczego-my" class="text-light-text-body hover:text-brand-primary dark:text-dark-text-body dark:hover:text-brand-primary-dark font-medium transition" data-scroll-offset="80">Dlaczego my?</a>
+                    <a href="#realizacje" class="text-light-text-body hover:text-brand-primary dark:text-dark-text-body dark:hover:text-brand-primary-dark font-medium transition" data-scroll-offset="200">Realizacje</a>
+                    <a href="#korzysci" class="text-light-text-body hover:text-brand-primary dark:text-dark-text-body dark:hover:text-brand-primary-dark font-medium transition" data-scroll-offset="200">Korzyści</a>
+                    <a href="#kontakt" class="text-light-text-body hover:text-brand-primary dark:text-dark-text-body dark:hover:text-brand-primary-dark font-medium transition" data-scroll-offset="80">Kontakt</a>
+                </div>
+                <button id="mobile-menu-button" class="lg:hidden text-light-text-body dark:text-dark-text-body focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="hidden lg:hidden px-6 pt-2 pb-4 bg-light-surface/30 dark:bg-dark-surface/30 backdrop-blur-lg">
+            <a href="#oferta" class="block py-2 text-light-text-body dark:text-dark-text-body hover:text-brand-primary dark:hover:text-brand-primary-dark transition" data-scroll-offset="120">Dla kogo?</a>
+            <a href="#dlaczego-my" class="block py-2 text-light-text-body dark:text-dark-text-body hover:text-brand-primary dark:hover:text-brand-primary-dark transition" data-scroll-offset="80">Dlaczego my?</a>
+            <a href="#realizacje" class="block py-2 text-light-text-body dark:text-dark-text-body hover:text-brand-primary dark:hover:text-brand-primary-dark transition" data-scroll-offset="200">Realizacje</a>
+            <a href="#korzysci" class="block py-2 text-light-text-body dark:text-dark-text-body hover:text-brand-primary dark:hover:text-brand-primary-dark transition" data-scroll-offset="200">Korzyści</a>
+            <a href="#kontakt" class="block py-2 text-light-text-body dark:text-dark-text-body hover:text-brand-primary dark:hover:text-brand-primary-dark transition" data-scroll-offset="80">Kontakt</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6">
+        <!-- Sekcja 1: Hero -->
+        <section id="hero" class="min-h-screen flex flex-col justify-center items-center text-center">
+            <h1 class="gradient-text text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6 fade-in">
+                Zautomatyzuj Swoje Procesy.<br class="hidden md:block"/> Odzyskaj Czas i Zwiększ Efektywność.
+            </h1>
+            <p class="text-lg md:text-xl text-light-text-body dark:text-dark-text-body max-w-3xl mx-auto mb-10 fade-in" style="transition-delay: 150ms;">
+                Masz dość powtarzalnych zadań i skomplikowanych procesów? Pokażemy Ci, jak w prosty sposób zautomatyzować pracę i odzyskać kontrolę nad swoim czasem.
+            </p>
+            <div class="fade-in" style="transition-delay: 300ms;">
+                <a href="#oferta" id="enter-button" data-scroll-offset="200" class="interactive-lift inline-block bg-brand-primary dark:bg-brand-primary-dark text-white font-bold text-lg px-10 py-4 rounded-lg shadow-lg">
+                    Odkryj możliwości
+                </a>
+            </div>
+        </section>
+
+        <!-- Sekcja 2: Odkryj Potencjał Automatyzacji -->
+        <section id="oferta" class="py-20 section-hidden">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 fade-in gradient-text">Odkryj Potencjał Automatyzacji</h2>
+                <p class="text-lg text-light-text-body dark:text-dark-text-body max-w-3xl mx-auto mb-12 fade-in">
+                    Nasze rozwiązania są elastyczne i dopasowane do różnych potrzeb. Niezależnie od tego, czy prowadzisz firmę, chcesz usprawnić swoje codzienne życie, czy reprezentujesz instytucję - mamy coś dla Ciebie. Wybierz kategorię i zobacz przykłady.
+                </p>
+
+                <div id="tab-buttons-new" class="flex justify-center border-b border-gray-200/20 mb-12 fade-in">
+                    <button class="tab-button-new active" data-tab="b2b">Dla Firm</button>
+                    <button class="tab-button-new" data-tab="b2c">Dla Ciebie</button>
+                    <button class="tab-button-new" data-tab="instytucje">Dla Instytucji</button>
+                </div>
+
+                <div id="tab-content-new">
+                    <!-- Zakładka Dla Firm -->
+                    <div id="b2b" class="tab-pane-new active grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="tab-card"><img src="ikony/customer-service.png" alt="" class="h-8 w-8 mr-4"><span>Automatyzacja obsługi klienta</span></div>
+                        <div class="tab-card"><img src="ikony/report.png" alt="" class="h-8 w-8 mr-4"><span>Generowanie raportów</span></div>
+                        <div class="tab-card"><img src="ikony/invoice.png" alt="" class="h-8 w-8 mr-4"><span>Zarządzanie fakturami</span></div>
+                        <div class="tab-card"><img src="ikony/human-resource (1).png" alt="" class="h-8 w-8 mr-4"><span>Zbieranie i kwalifikacja leadów</span></div>
+                        <div class="tab-card"><img src="ikony/recruitment.png" alt="" class="h-8 w-8 mr-4"><span>Automatyzacja procesów rekrutacyjnych</span></div>
+                        <div class="tab-card"><img src="ikony/workforce.png" alt="" class="h-8 w-8 mr-4"><span>Onboarding pracowników</span></div>
+                    </div>
+
+                    <!-- Zakładka Dla Ciebie (B2C) -->
+                    <div id="b2c" class="tab-pane-new grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="tab-card"><img src="ikony/headset.png" alt="" class="h-8 w-8 mr-4"><span>Personalny asystent AI</span></div>
+                        <div class="tab-card"><img src="ikony/home (2).png" alt="" class="h-8 w-8 mr-4"><span>Automatyzacja domowego budżetu</span></div>
+                        <div class="tab-card"><img src="ikony/travel.png" alt="" class="h-8 w-8 mr-4"><span>Inteligentne planowanie podróży</span></div>
+                        <div class="tab-card"><img src="ikony/translator.png" alt="" class="h-8 w-8 mr-4"><span>Trener językowy AI</span></div>
+                        <div class="tab-card"><img src="ikony/bell.png" alt="" class="h-8 w-8 mr-4"><span>Inteligentne powiadomienia</span></div>
+                        <div class="tab-card"><img src="ikony/time-management.png" alt="" class="h-8 w-8 mr-4"><span>Automatyczne zarządzanie czasem</span></div>
+                    </div>
+
+                    <!-- Zakładka Dla Instytucji -->
+                    <div id="instytucje" class="tab-pane-new grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="tab-card"><img src="ikony/content-management.png" alt="" class="h-8 w-8 mr-4"><span>Automatyzacja obsługi wniosków</span></div>
+                        <div class="tab-card"><img src="ikony/requirement.png" alt="" class="h-8 w-8 mr-4"><span>Cyfrowy obieg dokumentów</span></div>
+                        <div class="tab-card"><img src="ikony/info.png" alt="" class="h-8 w-8 mr-4"><span>Chatboty informacyjne dla mieszkańców</span></div>
+                        <div class="tab-card"><img src="ikony/data-driven.png" alt="" class="h-8 w-8 mr-4"><span>Automatyczna analiza danych badawczych</span></div>
+                        <div class="tab-card"><img src="ikony/time-management.png" alt="" class="h-8 w-8 mr-4"><span>Zarządzanie rezerwacjami sal
+
+                        </span></div>
+                        <div class="tab-card"><img src="ikony/feedback.png" alt="" class="h-8 w-8 mr-4"><span>Systemy ankiet i zbieranie opinii</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sekcja 3: Dlaczego my? -->
+        <section id="dlaczego-my" class="py-20 section-hidden">
+            <div class="container mx-auto text-center">
+                <h2 class="text-3xl font-bold mb-12 fade-in gradient-text">Dlaczego my?</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="hover-lift bg-light-surface/30 dark:bg-dark-surface/30 backdrop-blur-lg p-8 rounded-xl shadow-lg fade-in flex flex-col items-center">
+                        <img src="ikony/contact-us.png" alt="Ikona" class="h-12 w-12 mb-4">
+                        <h3 class="gradient-text text-xl font-bold mb-3">Szybki kontakt</h3>
+                        <p>Zapewniamy sprawną komunikację i transparentność na każdym etapie projektu.</p>
+                    </div>
+                    <div class="hover-lift bg-light-surface/30 dark:bg-dark-surface/30 backdrop-blur-lg p-8 rounded-xl shadow-lg fade-in flex flex-col items-center">
+                        <img src="ikony/rocket.png" alt="Ikona" class="h-12 w-12 mb-4">
+                        <h3 class="gradient-text text-xl font-bold mb-3">Szybkie wdrożenia (MVP)</h3>
+                        <p>Schemat projektu i działający prototyp (MVP) gotowe nawet w 5 dni.</p>
+                    </div>
+                    <div class="hover-lift bg-light-surface/30 dark:bg-dark-surface/30 backdrop-blur-lg p-8 rounded-xl shadow-lg fade-in flex flex-col items-center">
+                        <img src="ikony/nanotechnology.png" alt="Ikona" class="h-12 w-12 mb-4">
+                        <h3 class="gradient-text text-xl font-bold mb-3">Elastyczne technologie</h3>
+                        <p>Dobieramy narzędzia do projektu i budżetu, a nie odwrotnie.</p>
+                    </div>
+                    <div class="hover-lift bg-light-surface/30 dark:bg-dark-surface/30 backdrop-blur-lg p-8 rounded-xl shadow-lg fade-in flex flex-col items-center">
+                        <img src="ikony/technical-support.png" alt="Ikona" class="h-12 w-12 mb-4">
+                        <h3 class="gradient-text text-xl font-bold mb-3">Pełne wsparcie i szkolenia</h3>
+                        <p>Oferujemy dokumentację, wsparcie techniczne, a dla wymagających – dedykowane szkolenia.</p>
+                    </div>
+                    <div class="hover-lift bg-light-surface/30 dark:bg-dark-surface/30 backdrop-blur-lg p-8 rounded-xl shadow-lg fade-in flex flex-col items-center">
+                        <img src="ikony/data-security.png" alt="Ikona" class="h-12 w-12 mb-4">
+                        <h3 class="gradient-text text-xl font-bold mb-3">Bezpieczeństwo i RODO</h3>
+                        <p>Gwarantujemy bezpieczeństwo Twoich danych i pełną zgodność z obowiązującymi przepisami.</p>
+                    </div>
+                    <div class="hover-lift bg-light-surface/30 dark:bg-dark-surface/30 backdrop-blur-lg p-8 rounded-xl shadow-lg fade-in flex flex-col items-center">
+                        <img src="ikony/deal.png" alt="Ikona" class="h-12 w-12 mb-4">
+                        <h3 class="gradient-text text-xl font-bold mb-3">Przejrzyste rozliczenia</h3>
+                        <p>Płacisz za efekty, a nie za obietnice.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+        <!-- Sekcja 5: Przykłady naszych wdrożeń -->
+        <section id="realizacje" class="py-20 section-hidden">
+            <div class="text-center mb-16">
+                <h2 class="gradient-text text-3xl md:text-4xl font-bold mb-4 fade-in">Przykłady naszych wdrożeń</h2>
+            </div>
+            <div class="grid md:grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                <div class="project-card hover-lift bg-light-surface/30 dark:bg-dark-surface/30 backdrop-blur-lg rounded-xl shadow-lg p-8 fade-in flex flex-col cursor-pointer" data-project-id="faktury">
+                    <h3 class="gradient-text text-2xl font-bold mb-3">Automatyzacja Przetwarzania Faktur</h3>
+                    <p class="mb-4"><strong>Wyzwanie:</strong> Ręczne wprowadzanie setek faktur miesięcznie. <br><strong>Rozwiązanie:</strong> System OCR zintegrowany z n8n.</p>
+
+                </div>
+                <div class="project-card hover-lift bg-light-surface/30 dark:bg-dark-surface/30 backdrop-blur-lg rounded-xl shadow-lg p-8 fade-in flex flex-col cursor-pointer" data-project-id="asystent">
+                    <h3 class="gradient-text text-2xl font-bold mb-3"> System Integracji Danych E-commerce</h3>
+                    <p class="mb-4"><strong>Wyzwanie:</strong> Ręczna agregacja danych z kilku systemów sprzedaży. <br><strong>Rozwiązanie:</strong> Centralny hub danych integrujący wszystkie kanały.</p>
+
+                </div>
+                                    <div class="project-card hover-lift bg-light-surface/30 dark:bg-dark-surface/30 backdrop-blur-lg rounded-xl shadow-lg p-8 fade-in flex flex-col cursor-pointer" data-project-id="wirtualny-handlowiec">
+                    <h3 class="gradient-text text-2xl font-bold mb-3">Wirtualny Handlowiec B2B</h3>
+                    <p class="mb-4"><strong>Wyzwanie:</strong> Czasochłonne, ręczne wyszukiwanie i kwalifikowanie klientów B2B. <br><strong>Rozwiązanie:</strong> Bot AI, który samodzielnie znajduje klientów i tworzy dla nich spersonalizowane maile.</p>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Sekcja Kluczowe Korzyści -->
+        <section id="korzysci" class="py-20 section-hidden">
+            <div class="text-center mb-12">
+                <h2 class="gradient-text text-3xl md:text-4xl font-bold mb-4 fade-in">Kluczowe korzyści</h2>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+                <!-- Korzyść 1 -->
+                <div class="text-center p-6 bg-light-surface/30 dark:bg-dark-surface/30 backdrop-blur-lg rounded-xl shadow-lg fade-in">
+                    <div class="text-5xl mb-4">⏱️</div>
+                    <h3 class="text-xl font-bold mb-2">Oszczędność czasu</h3>
+                    <p class="text-light-text-body dark:text-dark-text-body">więcej przestrzeni na strategiczne działania.</p>
+                </div>
+                <!-- Korzyść 2 -->
+                <div class="text-center p-6 bg-light-surface/30 dark:bg-dark-surface/30 backdrop-blur-lg rounded-xl shadow-lg fade-in">
+                    <div class="text-5xl mb-4">💸</div>
+                    <h3 class="text-xl font-bold mb-2">Redukcja kosztów</h3>
+                    <p class="text-light-text-body dark:text-dark-text-body">inwestycja, która procentuje każdego dnia.</p>
+                </div>
+                <!-- Korzyść 3 -->
+                <div class="text-center p-6 bg-light-surface/30 dark:bg-dark-surface/30 backdrop-blur-lg rounded-xl shadow-lg fade-in">
+                    <div class="text-5xl mb-4">🎯</div>
+                    <h3 class="text-xl font-bold mb-2">Lepsza jakość i decyzje</h3>
+                    <p class="text-light-text-body dark:text-dark-text-body">dzięki danym dostępnym od ręki.</p>
+                </div>
+                <!-- Korzyść 4 -->
+                <div class="text-center p-6 bg-light-surface/30 dark:bg-dark-surface/30 backdrop-blur-lg rounded-xl shadow-lg fade-in">
+                    <div class="text-5xl mb-4">🔒</div>
+                    <h3 class="text-xl font-bold mb-2">Bezpieczeństwo danych</h3>
+                    <p class="text-light-text-body dark:text-dark-text-body">korzystamy z bezpiecznej chmury i szyfrowania.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sekcja 7: Kontakt -->
+        <section id="kontakt" class="py-20 section-hidden text-center fade-in">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold mb-6 gradient-text">Masz pytania? Porozmawiajmy!</h2>
+                <p class="max-w-2xl mx-auto mb-10 text-light-text-body dark:text-dark-text-body">Jesteśmy gotowi, aby pomóc Ci wdrożyć automatyzację w Twojej firmie. Skontaktuj się z nami, aby omówić Twój projekt.</p>
+                <button id="open-contact-modal-section" class="interactive-lift bg-gradient-to-r from-indigo-500 to-violet-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-transform duration-300 hover:scale-105">
+                    Napisz do nas
+                </button>
+            </div>
+        </section>
+        <!-- Modal kontaktowy -->
+    <div id="contact-modal" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50 hidden">
+        <div id="contact-modal-content" class="bg-light-surface dark:bg-dark-surface p-1 rounded-2xl shadow-2xl w-full max-w-md relative card-lift-shadow">
+            <div class="bg-light-surface dark:bg-dark-surface p-8 rounded-xl">
+                <button id="close-contact-modal" class="absolute top-4 right-4 text-light-text-secondary dark:text-dark-text-secondary hover:text-light-text dark:hover:text-dark-text text-3xl font-light">&times;</button>
+                <h2 class="text-2xl font-bold text-center mb-6 gradient-text">Skontaktuj się z nami</h2>
+                <form>
+                    <div class="mb-4">
+                        <label for="name" class="block text-sm font-medium text-light-text-body dark:text-dark-text-body mb-2">Imię i Nazwisko <span class="text-red-500">*</span></label>
+                        <input type="text" id="name" name="name" class="form-input w-full p-3 border rounded-lg bg-light-surface/50 dark:bg-dark-surface/50 border-light-accent dark:border-dark-accent focus:ring-2 focus:ring-brand-primary dark:focus:ring-brand-primary-dark focus:border-transparent transition">
+                    </div>
+                    <div class="mb-4">
+                        <label for="email" class="block text-sm font-medium text-light-text-body dark:text-dark-text-body mb-2">Email <span class="text-red-500">*</span></label>
+                        <input type="email" id="email" name="email" class="form-input w-full p-3 border rounded-lg bg-light-surface/50 dark:bg-dark-surface/50 border-light-accent dark:border-dark-accent focus:ring-2 focus:ring-brand-primary dark:focus:ring-brand-primary-dark focus:border-transparent transition">
+                    </div>
+                    <div class="mb-6">
+                        <label for="message" class="block text-sm font-medium text-light-text-body dark:text-dark-text-body mb-2">Wiadomość</label>
+                        <textarea id="message" name="message" rows="4" class="form-input w-full p-3 border rounded-lg bg-light-surface/50 dark:bg-dark-surface/50 border-light-accent dark:border-dark-accent focus:ring-2 focus:ring-brand-primary dark:focus:ring-brand-primary-dark focus:border-transparent transition"></textarea>
+                    </div>
+                    <button type="submit" class="w-full text-white font-bold py-3 px-4 rounded-lg transition-transform duration-300 ease-in-out transform hover:scale-105 gradient-button">Wyślij</button>
+                </form>
+                <div id="form-success-message" class="hidden mt-6 text-lg text-light-text-body dark:text-dark-text-body">Dziękujemy za wiadomość! Skontaktujemy się z Tobą wkrótce.</div>
+            </div>
+        </div>
+    </div>
+
+
+
+    </main>
+
+    <footer class="bg-light-surface/30 dark:bg-dark-surface/30 backdrop-blur-lg text-center py-8 mt-20">
+        <div class="container mx-auto px-4">
+            <p class="text-sm text-light-text-secondary dark:text-dark-text-secondary">&copy; 2025. Wszelkie prawa zastrzeżone. | <a href="mailto:automatyzacjebiznesowe@gmail.com" class="hover:underline">automatyzacjebiznesowe@gmail.com</a></p>
+        </div>
+    </footer>
+
+        <style>
+        /* Poprawka widoczności przycisku w formularzu kontaktowym (motyw jasny) */
+        body:not(.dark) #contact-modal button[type="submit"].gradient-button {
+            background-image: none; /* Usuwamy gradient */
+            border: 2px solid #4B5563; /* Szara ramka */
+            color: #4B5563; /* Szary tekst */
+            background-color: transparent;
+            transition: background-color 0.25s, color 0.25s;
+        }
+
+                        body:not(.dark) #contact-modal button[type="submit"].gradient-button:hover {
+            background-color: #4B5563; /* Wypełnienie szarym tłem dla lepszej widoczności */
+            color: white; /* Biały tekst dla maksymalnego kontrastu */
+        }
+
+        .card-lift-shadow {
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25), 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        .interactive-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .interactive-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1), 0 6px 6px rgba(0,0,0,0.1);
+        }
+
+        .gradient-button {
+            background-image: linear-gradient(to right, #6366F1, #8B5CF6);
+        }
+
+        .form-input.invalid {
+            border-color: #EF4444; /* Czerwony kolor dla błędu */
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+        }
+
+        #contact-modal-content {
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scale(0.95);
+            opacity: 0;
+        }
+
+        #contact-modal-content.modal-opening {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        #contact-modal-content.modal-closing {
+            transform: scale(0.95);
+            opacity: 0;
+        }
+
+        .chat-bubble {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #6366F1;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .chat-bubble.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .close-bubble {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 20px;
+            line-height: 1;
+            cursor: pointer;
+        }
+    </style>
+
+    <!-- ===== Modal/Popup dla Projektów ===== -->
+    <div id="project-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div id="modal-content-container" class="bg-light-surface dark:bg-dark-surface rounded-lg shadow-2xl max-w-2xl w-full flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-center p-4 border-b border-light-border dark:border-dark-border flex-shrink-0">
+                <h2 id="modal-title" class="gradient-text text-2xl font-bold">Tytuł Projektu</h2>
+                <button id="close-modal-button" class="text-light-text-body dark:text-dark-text-body hover:text-brand-primary dark:hover:text-brand-primary-dark transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div id="modal-inner-content" class="p-6 overflow-y-auto">
+                <!-- Treść będzie wstawiana dynamicznie przez JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Sekcja Chatbota ===== -->
+    <div id="chat-widget-container">
+        <!-- Kontener Panelu Czatu (początkowo ukryty) -->
+        <div id="chat-container" class="hidden w-full chat-bg-blur rounded-lg shadow-xl flex flex-col">
+            <!-- Nagłówek czatu -->
+            <div class="flex justify-between items-center p-3 bg-white/50 dark:bg-slate-800/50 rounded-t-lg border-b border-gray-200/50 dark:border-gray-700/50">
+                <h3 class="font-bold text-light-text-head dark:text-dark-text-head">Wirtualny asystent</h3>
+                <button id="close-chat-button" class="text-gray-500 hover:text-gray-800 dark:hover:text-gray-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <!-- Wiadomości -->
+            <div id="chat-messages" class="p-4 h-[500px] overflow-y-auto space-y-4"></div>
+            <!-- Pole do wpisywania -->
+            <div class="p-3 border-t border-gray-200/50 dark:border-gray-700/50 flex items-center bg-white/30 dark:bg-slate-800/30 rounded-b-lg">
+                <input type="text" id="chat-input" placeholder="Wpisz wiadomość..." class="flex-grow px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-primary">
+                <button id="chat-send-button" class="ml-3 bg-brand-primary text-white p-2 rounded-full interactive-lift">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Przycisk do otwierania czatu -->
+        <button id="chat-open-button" class="absolute bottom-0 right-0 interactive-lift bg-brand-primary text-white rounded-full p-4 shadow-lg">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+        </button>
+    </div>
+    <!-- ===== Koniec Sekcji Chatbota ===== -->
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- Logika dla motywu ---
+            const setDarkTheme = () => document.documentElement.classList.add('dark');
+            const setLightTheme = () => document.documentElement.classList.remove('dark');
+
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                setDarkTheme();
+            } else {
+                setLightTheme();
+            }
+
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+                event.matches ? setDarkTheme() : setLightTheme();
+            });
+
+            // --- Logika dla mobilnego menu ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+            document.querySelectorAll('#mobile-menu a').forEach(link => {
+                link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+            });
+
+            // --- Logika dla nowej sekcji zakładek z animacją wysokości ---
+            const tabButtonsNew = document.querySelectorAll('.tab-button-new');
+            const tabContentContainer = document.getElementById('tab-content-new');
+            const tabPanesNew = document.querySelectorAll('.tab-pane-new');
+
+            const setContainerHeight = () => {
+                const activePane = document.querySelector('.tab-pane-new.active');
+                if (activePane) {
+                    tabContentContainer.style.height = activePane.scrollHeight + 'px';
+                }
+            };
+
+            tabButtonsNew.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.dataset.tab;
+
+                    tabButtonsNew.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    tabPanesNew.forEach(pane => pane.classList.remove('active'));
+                    const activePane = document.getElementById(tabId);
+                    if (activePane) {
+                        activePane.classList.add('active');
+                        setContainerHeight();
+                    }
+                });
+            });
+
+            // Ustawienie początkowej wysokości po załadowaniu strony
+            window.addEventListener('load', () => {
+                setTimeout(setContainerHeight, 150);
+            });
+
+
+
+            // --- Animacje "fade-in" przy przewijaniu ---
+        const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+            // --- Logika przycisku wejścia ---
+            const enterButton = document.getElementById('enter-button');
+            const sectionsToReveal = document.querySelectorAll('.section-hidden');
+
+            enterButton.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                // 1. Animacja przycisku
+                enterButton.classList.add('animate-jump');
+                setTimeout(() => {
+                    enterButton.classList.remove('animate-jump');
+                }, 500);
+
+                // 2. Odkryj ukryte sekcje
+                sectionsToReveal.forEach(section => {
+                    section.classList.remove('section-hidden');
+                });
+
+                // 3. Płynne przewinięcie z opóźnieniem
+                setTimeout(() => {
+                    const targetElement = document.getElementById('dla-kogo');
+                    if (targetElement) {
+                        const scrollOffset = -80;
+                        const elementPosition = targetElement.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset + scrollOffset;
+
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                }, 50); // Krótkie opóźnienie, aby przeglądarka przeliczyła layout
+            });
+
+            // --- LOGIKA DLA INTERAKTYWNEGO TŁA: "RUCHOME KÓŁKA" ---
+            const canvas = document.getElementById('interactive-bg');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            let bubblesArray;
+
+            class Bubble {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = canvas.height + Math.random() * 100; // Start poniżej ekranu
+                    this.radius = Math.random() * 5 + 1; // Rozmiar od 1 do 6
+                    this.speedY = Math.random() * 0.5 + 0.25; // Prędkość pionowa (spowolniona)
+                    this.speedX = (Math.random() - 0.5) * 0.25; // Lekki dryf poziomy (spowolniony)
+                    const isDarkMode = document.documentElement.classList.contains('dark');
+                    const baseColor = isDarkMode ? '200, 200, 220' : '100, 100, 120';
+                    this.color = `rgba(${baseColor}, ${Math.random() * 0.5 + 0.1})`; // Różna przezroczystość
+                }
+
+                update() {
+                    this.y -= this.speedY;
+                    this.x += this.speedX;
+
+                    if (this.y < -this.radius) {
+                        this.y = canvas.height + this.radius;
+                        this.x = Math.random() * canvas.width;
+                        this.speedY = Math.random() * 0.5 + 0.25; // Prędkość pionowa (spowolniona)
+                        this.speedX = (Math.random() - 0.5) * 0.25; // Lekki dryf poziomy (spowolniony)
+                    }
+                    if (this.x < this.radius || this.x > canvas.width - this.radius) {
+                        this.speedX = -this.speedX;
+                    }
+                }
+
+                draw() {
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function initBubbles() {
+                bubblesArray = [];
+                const numberOfBubbles = (canvas.width * canvas.height) / 10000;
+                for (let i = 0; i < numberOfBubbles; i++) {
+                    bubblesArray.push(new Bubble());
+                }
+            }
+
+            function animateBubbles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < bubblesArray.length; i++) {
+                    bubblesArray[i].update();
+                    bubblesArray[i].draw();
+                }
+                requestAnimationFrame(animateBubbles);
+            }
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                initBubbles();
+            });
+
+            new MutationObserver((mutations) => {
+                mutations.forEach(mutation => {
+                    if (mutation.attributeName === 'class') {
+                        initBubbles();
+                    }
+                });
+            }).observe(document.documentElement, { attributes: true });
+
+            initBubbles();
+            animateBubbles();
+
+            // --- Logika dla Chatbota ---
+            const chatContainer = document.getElementById('chat-container');
+            const openChatButton = document.getElementById('chat-open-button');
+            const closeChatButton = document.getElementById('close-chat-button');
+            const chatMessages = document.getElementById('chat-messages');
+            const chatInput = document.getElementById('chat-input');
+            const chatSendButton = document.getElementById('chat-send-button');
+            let welcomeMessageSent = false; // Flaga, aby wiadomość powitalna pojawiła się tylko raz
+
+            // Generowanie unikalnego ID czatu użytkownika
+            const userChatId = [...Array(16)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+
+            const toggleChat = (forceClose = false) => {
+                const isActive = chatContainer.classList.contains('active');
+                if (forceClose || isActive) {
+                    chatContainer.classList.remove('active');
+                    openChatButton.classList.remove('hidden-button');
+                } else {
+                    chatContainer.classList.remove('hidden');
+                    setTimeout(() => {
+                        chatContainer.classList.add('active');
+                        openChatButton.classList.add('hidden-button');
+                        
+                        // Wyświetl wiadomość powitalną tylko przy pierwszym otwarciu
+                        if (!welcomeMessageSent) {
+                            setTimeout(() => {
+                                displayMessage("Cześć! jestem twoim wirtualnym asystentem strony AutoBiz. W czym mogę ci pomóc?", 'bot');
+                                welcomeMessageSent = true;
+                            }, 300); // Opóźnienie dla płynniejszego efektu
+                        }
+                    }, 10);
+                }
+            };
+
+            const sendMessage = async () => {
+                const messageText = chatInput.value.trim();
+                if (messageText === '') return;
+
+                displayMessage(messageText, 'user');
+                chatInput.value = '';
+                
+                const typingIndicator = displayMessage('', 'bot', true);
+
+                try {
+                    const response = await fetch('https://growing-oarfish-grossly.ngrok-free.app/webhook/nowa-wiadomosc', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                            message: messageText,
+                            chat_id: userChatId
+                        }),
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.respond) {
+                            typingIndicator.querySelector('.bot-message-content').innerHTML = `<p>${data.respond}</p>`;
+                            typingIndicator.classList.remove('typing');
+                        }
+                    } else {
+                        console.error('Błąd podczas wysyłania webhooka:', response.statusText);
+                        typingIndicator.querySelector('.bot-message-content').innerHTML = `<p>Wystąpił błąd po stronie serwera.</p>`;
+                        typingIndicator.classList.remove('typing');
+                    }
+                } catch (error) {
+                    console.error('Błąd sieci lub fetch:', error);
+                    typingIndicator.querySelector('.bot-message-content').innerHTML = `<p>Przepraszam, mam problem z połączeniem.</p>`;
+                    typingIndicator.classList.remove('typing');
+                }
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            };
+
+            const displayMessage = (text, sender, isTyping = false) => {
+                const messageContainer = document.createElement('div');
+                messageContainer.classList.add('flex', 'items-end');
+
+                if (sender === 'user') {
+                    messageContainer.classList.add('justify-end');
+                    messageContainer.innerHTML = `<div class="bg-gray-200 dark:bg-gray-700 text-light-text-body dark:text-dark-text-body p-3 rounded-lg max-w-xs break-words"><p>${text}</p></div>`;
+                } else {
+                    messageContainer.classList.add('justify-start');
+                    if (isTyping) {
+                        messageContainer.innerHTML = 
+                            `<div class="bg-brand-primary text-white p-3 rounded-lg max-w-xs break-words bot-message-content">
+                                <div class="typing-indicator">
+                                    <span></span><span></span><span></span>
+                                </div>
+                            </div>`;
+                    } else {
+                        messageContainer.innerHTML = `<div class="bg-brand-primary text-white p-3 rounded-lg max-w-xs break-words bot-message-content"><p>${text}</p></div>`;
+                    }
+                }
+
+                chatMessages.appendChild(messageContainer);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                return messageContainer;
+            };
+
+            // Nasłuchiwacze zdarzeń dla chatbota
+            openChatButton.addEventListener('click', () => toggleChat());
+            closeChatButton.addEventListener('click', () => toggleChat(true));
+            chatSendButton.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // --- Logika dla Modala Projektów ---
+            const projectCards = document.querySelectorAll('.project-card');
+        const modal = document.getElementById('project-modal');
+        const modalContentContainer = document.getElementById('modal-content-container');
+        const modalContent = document.getElementById('modal-content');
+        const modalTitle = document.getElementById('modal-title');
+        const modalInnerContent = document.getElementById('modal-inner-content');
+        const closeModalButton = document.getElementById('close-modal-button');
+        let lastClickedCard = null;
+
+        const projectDetails = {
+            faktury: {
+                title: 'Automatyzacja Przetwarzania Faktur',
+                content: `<h3 class="text-xl font-bold mb-2">Opis</h3>
+<p class="mb-4">Każda faktura kosztowa, która trafia do Twojej firmy, to początek procesu – procesu, który może być albo źródłem frustracji i błędów, albo działać jak precyzyjny, zautomatyzowany mechanizm. Nasze rozwiązanie to w pełni autonomiczny system, który przejmuje cały cykl życia dokumentu. Od momentu, gdy faktura pojawia się w Twojej skrzynce mailowej, przez inteligentne odczytanie danych (dzięki technologii OCR), aż po automatyczne zaksięgowanie w systemie finansowym i archiwizację – wszystko dzieje się bez udziału człowieka, dając Ci pełną kontrolę i oszczędzając cenny czas.</p>
+
+<h3 class="text-xl font-bold mt-6 mb-2">Czy ten problem brzmi znajomo?</h3>
+<p class="mb-4">Jeśli zarządzasz finansami firmy, z pewnością wiesz, jak łatwo proces obsługi faktur może wymknąć się spod kontroli.</p>
+<ul class="list-disc list-inside space-y-2 mt-2">
+    <li><strong>Czy stos faktur na biurku rośnie z dnia na dzień?</strong> Ręczne przepisywanie danych z każdej faktury, pobieranie załączników i logowanie się do systemu księgowego to zadania, które kradną bezcenny czas Twojego zespołu – czas, który mógłby być poświęcony na analizy i rozwój.</li>
+    <li><strong>Czy obawiasz się kosztownych pomyłek?</strong> Jedna źle wpisana cyfra, błędny NIP czy pomylona data może prowadzić do problemów z płatnościami, nieprawidłowości w księgach i ogromnego stresu podczas audytów czy kontroli.</li>
+    <li><strong>Czy tracisz kontrolę nad przepływem dokumentów?</strong> Bez centralnego, zawsze aktualnego rejestru, śledzenie statusu płatności, odnajdywanie konkretnych faktur i efektywne zarządzanie finansami staje się niemal niemożliwe.</li>
+</ul>
+
+<h3 class="text-xl font-bold mt-6 mb-2">Nasze Rozwiązanie: Niezawodny i Inteligentny Asystent Księgowości</h3>
+<p class="mb-4">Zamiast dodawać kolejne zadania Twojemu zespołowi, wdrażamy system, który staje się jego najlepszym wsparciem.</p>
+<ul class="list-disc list-inside space-y-2 mt-2">
+    <li><strong>Pełna Automatyzacja Procesu:</strong> Nasz system działa jak cyfrowy pracownik działu księgowości. Samodzielnie odbiera faktury, odczytuje z nich wszystkie niezbędne dane z niemal 100% precyzją (dzięki technologii OCR) i eliminuje potrzebę jakiejkolwiek ręcznej pracy.</li>
+    <li><strong>Gwarancja Poprawności Danych:</strong> Automatyzacja to koniec pomyłek. Dane są przekazywane bezpośrednio między systemami, co gwarantuje ich spójność i poprawność, dając Ci spokój ducha i pewność, że Twoje księgi są w idealnym porządku.</li>
+    <li><strong>Centralny Punkt Kontroli:</strong> Wdrażamy przejrzysty pulpit (np. w oparciu o Google Sheets), gdzie w czasie rzeczywistym widzisz status każdej faktury. W jednej chwili wiesz, co zostało przetworzone, co czeka na płatność, a co wymaga Twojej uwagi.</li>
+    <li><strong>Inteligentne Zarządzanie Wyjątkami:</strong> Nasz system jest inteligentny. Jeśli napotka nietypowy lub nieczytelny dokument, nie zatrzymuje się, lecz oznacza go do weryfikacji i informuje odpowiednią osobę. To zapewnia ciągłość pracy bez ryzyka przeoczenia ważnego dokumentu.</li>
+</ul>
+
+<h3 class="text-xl font-bold mt-6 mb-2">Realne Korzyści dla Twojej Firmy 🏆</h3>
+<p class="mb-4">Inwestycja w automatyzację to nie koszt, to decyzja, która przynosi natychmiastowe i mierzalne rezultaty.</p>
+<ul class="list-disc list-inside space-y-2 mt-2">
+    <li><strong>Odzyskany Czas i Pieniądze:</strong> Wyobraź sobie oszczędność ponad 12 godzin pracy miesięcznie – i to przy zaledwie 200 fakturach. To czas, który Twój zespół może przeznaczyć na analizy finansowe i optymalizację kosztów. To inwestycja, która zwraca się w rekordowym tempie, generując oszczędności ponad 10 000 PLN rocznie.</li>
+    <li><strong>Bezpieczeństwo i Spokój Ducha:</strong> Eliminacja błędów ludzkich oznacza koniec stresu związanego z audytami i kontrolami. Masz pewność, że Twoje dane finansowe są precyzyjne, a każda transakcja ma podpięty cyfrowy dokument źródłowy.</li>
+    <li><strong>Gotowość na Rozwój:</strong> Twój biznes rośnie? Świetnie! Nasz system skaluje się razem z Tobą. Możesz przetwarzać dwa razy więcej faktur bez potrzeby zatrudniania dodatkowych osób do ich obsługi, zachowując pełną efektywność.</li>
+</ul>
+`
+            },
+            asystent: {
+                title: 'System Integracji Danych E-commerce',
+                content: `<h4 class="text-lg font-semibold mb-2">Opis</h4>
+<p class="mb-4">Dla naszego klienta z branży e-commerce, prowadzącego sprzedaż na wielu platformach jednocześnie, stworzyliśmy zintegrowany system analityczno-operacyjny. Rozwiązanie to działa jak centralny mózg firmy, automatycznie łącząc w jednym miejscu wszystkie kluczowe dane z takich źródeł jak Allegro, Amazon, eBay, Empik, platformy sklepowe (np. Shoper, Shopify) oraz system ERP (Subiekt GT). System w czasie rzeczywistym dostarcza spójny, 360-stopniowy widok na cały biznes – od stanów magazynowych i cen, przez dane o sprzedaży i zamówieniach, aż po wyniki kampanii marketingowych z Facebook Ads. Efektem jest jedno, wiarygodne źródło prawdy, które stanowi fundament do podejmowania trafnych decyzji biznesowych.</p>
+
+<h4 class="text-lg font-semibold mb-2">Problem: Chaos informacyjny jako hamulec rozwoju</h4>
+<p class="mb-4">Klient zmagał się z wyzwaniami typowymi dla dynamicznie rosnącego e-commerce:</p>
+<p class="mb-2"><strong>Rozproszone dane:</strong> Informacje o sprzedaży, produktach i klientach były uwięzione w kilkunastu różnych, niekomunikujących się ze sobą systemach. Tworzyło to chaos informacyjny, który uniemożliwiał uzyskanie odpowiedzi na podstawowe pytania, np. o rzeczywistą rentowność danego produktu.</p>
+<p class="mb-2"><strong>Straty czasu i pieniędzy:</strong> Zespół poświęcał dziesiątki godzin tygodniowo na żmudne, ręczne kopiowanie danych do arkuszy kalkulacyjnych. Proces ten był nie tylko nieefektywny, ale również obarczony wysokim ryzykiem kosztownych pomyłek.</p>
+<p class="mb-4"><strong>Decyzje "na wyczucie":</strong> Brak spójnych i wiarygodnych danych sprawiał, że kluczowe decyzje – dotyczące cen, zatowarowania czy inwestycji w marketing – były podejmowane w dużej mierze w oparciu o intuicję, a nie twarde fakty.</p>
+
+<h4 class="text-lg font-semibold mb-2">Rozwiązanie: „Cyfrowy pracownik” pracujący dla Twojego biznesu 24/7</h4>
+<p class="mb-4">W odpowiedzi na te problemy zaprojektowaliśmy i wdrożyliśmy inteligentny system, który działa jak niestrudzony analityk danych, pracujący dla klienta przez całą dobę.</p>
+<p class="mb-2"><strong>Stworzenie Jednego Źródła Prawdy:</strong> Nasza automatyzacja cyklicznie i samodzielnie pobiera dane ze wszystkich wskazanych platform. Niezależnie od tego, gdzie dokonano sprzedaży lub zaktualizowano stan magazynowy, system natychmiast to odnotowuje i konsoliduje informacje w centralnej bazie danych (Google Sheets).</p>
+<p class="mb-2"><strong>Dane Gotowe do Analizy:</strong> Surowe dane z różnych systemów są automatycznie czyszczone, przekształcane i standaryzowane. System inteligentnie łączy informacje dotyczące tego samego produktu (np. po kodzie EAN) z różnych kanałów, dzięki czemu stają się one w pełni porównywalne i gotowe do natychmiastowej analizy.</p>
+<p class="mb-4"><strong>Niezawodność i Proaktywne Działanie:</strong> System został wyposażony w mechanizmy autokontroli. Samodzielnie monitoruje poprawność połączeń z platformami zewnętrznymi i w razie wykrycia jakiegokolwiek problemu (np. wygaśnięcia dostępu) natychmiast informuje o tym zespół, zapobiegając przestojom.</p>
+
+<h4 class="text-lg font-semibold mb-2">Rezultat 🏆: Od chaosu w danych do pełnej kontroli i szybszego wzrostu</h4>
+<p class="mb-4">Wdrożenie automatyzacji przełożyło się na fundamentalną transformację w działaniu firmy klienta.</p>
+<p class="mb-2"><strong>Uwolnienie Setek Godzin Pracy Rocznie:</strong> Zespół przestał zajmować się ręcznym zbieraniem danych, co pozwoliło mu skupić się na zadaniach, które realnie napędzają sprzedaż – analizie rynku, optymalizacji oferty i obsłudze klienta.</p>
+<p class="mb-2"><strong>Decyzje Oparte na Danych, a nie Domysłach:</strong> Klient wreszcie zyskał możliwość uzyskania natychmiastowej odpowiedzi na kluczowe pytania: Które produkty są najbardziej rentowne? Który kanał sprzedaży generuje największy zysk? Jak zoptymalizować wydatki na kampanie reklamowe?</p>
+<p class="mb-4"><strong>Minimalizacja Ryzyka i Maksymalizacja Zysków:</strong> Wiarygodne dane o stanach magazynowych na wszystkich platformach wyeliminowały problem sprzedaży produktów, których fizycznie nie ma na stanie. Z kolei analiza marżowości pozwoliła na świadome kształtowanie polityki cenowej i zwiększenie rentowności.</p>
+
+`
+            },
+            'wirtualny-handlowiec': {
+                title: 'Wirtualny Handlowiec B2B',
+                content: `<h3>Opis</h3>
+                          <p>To kompleksowy system automatyzacji sprzedaży B2B, który działa jak cyfrowy asystent dla zespołu handlowego. Proces rozpoczyna się od automatycznego wyszukiwania i identyfikacji potencjalnych klientów w Internecie na podstawie zdefiniowanych kryteriów (np. w mapach Google). Następnie, system samodzielnie wzbogaca zebrane dane – odwiedza strony internetowe firm, aby pozyskać kontakty do osób decyzyjnych, a także weryfikuje informacje finansowe w publicznych bazach rządowych. Kulminacyjnym punktem jest wykorzystanie sztucznej inteligencji do stworzenia unikalnej propozycji wartości (USP) i napisania w pełni spersonalizowanej wiadomości e-mail dla każdej firmy. Cały, gotowy do wysłania i wzbogacony lead jest na końcu automatycznie ładowany do systemu CRM.</p>
+
+                          <h3 class="text-xl font-bold mt-6 mb-2">Problem: Handlowcy tracą czas na szukaniu, zamiast sprzedawać</h3>
+                          <p>Tradycyjny proces pozyskiwania klientów B2B był głównym hamulcem efektywności zespołu sprzedażowego klienta.</p>
+                          <ul class="list-disc list-inside space-y-2 mt-2">
+                              <li><strong>Ogromna czasochłonność:</strong> Zespół handlowy poświęcał ponad połowę swojego czasu na żmudne, ręczne zadania: wyszukiwanie firm, przeglądanie stron internetowych w poszukiwaniu adresów e-mail i badanie kondycji finansowej potencjalnych klientów.</li>
+                              <li><strong>Niska jakość leadów:</strong> Manualne poszukiwania często kończyły się pozyskaniem ogólnych adresów kontaktowych (typu biuro@), a brak czasu uniemożliwiał dogłębną analizę i personalizację komunikacji, co skutkowało niską skutecznością.</li>
+                              <li><strong>Brak skalowalności:</strong> Zwiększenie liczby pozyskiwanych klientów wymagało liniowego zwiększenia zatrudnienia, co generowało wysokie koszty i było nieefektywne.</li>
+                          </ul>
+
+                          <h3 class="text-xl font-bold mt-6 mb-2">Rozwiązanie: Inteligentny asystent, który przygotowuje gotowe leady</h3>
+                          <p>Stworzyliśmy w pełni autonomiczny system, który przejął na siebie najbardziej czasochłonne etapy procesu sprzedażowego.</p>
+                          <ul class="list-disc list-inside space-y-2 mt-2">
+                              <li><strong>Automatyczny Research i Wzbogacanie Danych:</strong> System samodzielnie skanuje Internet w poszukiwaniu firm pasujących do profilu idealnego klienta. Automatycznie analizuje ich strony internetowe i publiczne rejestry, aby zbudować kompletny profil, zawierający dane kontaktowe do kluczowych osób oraz informacje o sytuacji finansowej.</li>
+                              <li><strong>Personalizacja na Skalę dzięki AI:</strong> To serce naszego rozwiązania. System wykorzystuje zaawansowane modele językowe (AI) do analizy zebranych informacji. Na tej podstawie dla każdej firmy tworzy dedykowaną, unikalną propozycję wartości (USP) oraz redaguje spersonalizowaną wiadomość e-mail, która trafia w sedno potrzeb potencjalnego klienta.</li>
+                              <li><strong>Pełna Integracja z CRM:</strong> Każdy przygotowany w ten sposób lead – wraz z kompletem danych, analizą i gotową wiadomością – jest automatycznie umieszczany w systemie CRM jako nowe zadanie dla handlowca. Sprzedawca otrzymuje powiadomienie i może od razu przystąpić do działania.</li>
+                          </ul>
+
+                          <h3 class="text-xl font-bold mt-6 mb-2">Rezultat 🏆: Zespół handlowy skupiony w 100% na sprzedaży</h3>
+                          <p>Wdrożenie „Wirtualnego Handlowca” przyniosło rewolucyjne zmiany w dziale sprzedaży klienta.</p>
+                          <ul class="list-disc list-inside space-y-2 mt-2">
+                              <li><strong>Odzyskanie setek godzin pracy:</strong> System uwolnił handlowców od zadań badawczych, pozwalając im w pełni skoncentrować się na budowaniu relacji i finalizowaniu transakcji, co bezpośrednio przełożyło się na wzrost przychodów.</li>
+                              <li><strong>Znaczący wzrost skuteczności outreachu:</strong> Dzięki zaawansowanej personalizacji, wskaźniki otwarć i odpowiedzi na wysyłane wiadomości wzrosły kilkukrotnie w porównaniu do wcześniejszych, generycznych kampanii.</li>
+                              <li><strong>Stały dopływ wysokiej jakości leadów:</strong> Automatyzacja zapewniła stały, przewidywalny napływ w pełni przygotowanych i wstępnie zakwalifikowanych szans sprzedażowych prosto do systemu CRM.</li>
+                          </ul>
+                          `
+            },
+        };
+
+        const openModal = (card) => {
+            lastClickedCard = card;
+            const projectId = card.dataset.projectId;
+            const details = projectDetails[projectId];
+            if (!details) return;
+
+            modalTitle.textContent = details.title;
+            modalInnerContent.innerHTML = details.content;
+
+            const cardRect = card.getBoundingClientRect();
+
+            // Ustaw stan początkowy (rozmiar i pozycja karty)
+            modalContentContainer.style.left = `${cardRect.left}px`;
+            modalContentContainer.style.top = `${cardRect.top}px`;
+            modalContentContainer.style.width = `${cardRect.width}px`;
+            modalContentContainer.style.height = `${cardRect.height}px`;
+            modalContentContainer.style.opacity = '0';
+
+            modal.classList.remove('hidden');
+            modal.style.backgroundColor = 'transparent';
+
+            // Wymuś odświeżenie DOM, aby przeglądarka zarejestrowała stan początkowy
+            requestAnimationFrame(() => {
+                const finalWidth = Math.min(window.innerWidth * 0.9, 768);
+
+                modalContentContainer.style.left = `${(window.innerWidth - finalWidth) / 2}px`;
+                modalContentContainer.style.width = `${finalWidth}px`;
+                modalContentContainer.style.height = 'auto'; // Pozwól CSS i treści zarządzać wysokością
+                modalContentContainer.style.opacity = '1';
+                modal.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+
+                // Wycentruj w pionie po tym, jak przeglądarka obliczy wysokość 'auto'
+                setTimeout(() => {
+                    const finalHeight = modalContentContainer.offsetHeight;
+                    modalContentContainer.style.height = `${finalHeight}px`; // Ustawienie stałej wysokości
+                    modalContentContainer.style.top = `${(window.innerHeight - finalHeight) / 2}px`;
+                }, 0);
+            });
+
+            
+
+            document.body.style.overflow = 'hidden';
+        };
+
+        projectCards.forEach(card => {
+            card.addEventListener('click', () => openModal(card));
+        });
+
+        const closeModal = () => {
+            if (!lastClickedCard) return;
+
+            const cardRect = lastClickedCard.getBoundingClientRect();
+
+            modalContentContainer.style.left = `${cardRect.left}px`;
+            modalContentContainer.style.top = `${cardRect.top}px`;
+            modalContentContainer.style.width = `${cardRect.width}px`;
+            modalContentContainer.style.height = `${cardRect.height}px`;
+            modalContentContainer.style.opacity = '0';
+            modal.style.backgroundColor = 'transparent';
+
+            modalContentContainer.addEventListener('transitionend', function onEnd() {
+                modal.classList.add('hidden');
+                modal.classList.remove('visible');
+                document.body.style.overflow = '';
+                // Reset stylu na wszelki wypadek
+                modalContentContainer.style.width = '';
+                modalContentContainer.style.height = '';
+                modalContentContainer.removeEventListener('transitionend', onEnd);
+            });
+        };
+
+        projectCards.forEach(card => {
+            card.addEventListener('click', () => openModal(card));
+        });
+
+        closeModalButton.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+
+        // --- Logika dla modala formularza kontaktowego ---
+        const contactModal = document.getElementById('contact-modal');
+        const contactModalContent = document.getElementById('contact-modal-content');
+        const openNavButton = document.getElementById('open-contact-modal-nav');
+        const openNavMobileButton = document.getElementById('open-contact-modal-nav-mobile');
+        const openSectionButton = document.getElementById('open-contact-modal-section');
+        const closeContactModalButton = document.getElementById('close-contact-modal');
+
+        const openContactModal = (e) => {
+            if (e) e.preventDefault();
+            document.body.style.overflow = 'hidden';
+            contactModal.classList.remove('hidden');
+            contactModal.classList.add('flex');
+            // Krótkie opóźnienie, aby przeglądarka zdążyła zastosować 'display: flex'
+            // przed rozpoczęciem animacji CSS (dodaniem klasy 'visible').
+            requestAnimationFrame(() => {
+                contactModal.classList.add('visible');
+            });
+        };
+
+        const closeContactModal = () => {
+            const contactForm = document.querySelector('#contact-modal form');
+            const successMessage = document.getElementById('form-success-message');
+
+            contactModalContent.classList.add('modal-closing');
+            contactModalContent.classList.remove('modal-opening');
+
+            setTimeout(() => {
+                contactModal.classList.add('hidden');
+                contactModalContent.classList.remove('modal-closing');
+                document.body.style.overflow = '';
+
+                // Reset widoku formularza
+                contactForm.classList.remove('hidden');
+                successMessage.classList.add('hidden');
+                contactForm.reset();
+            }, 250);
+        };
+
+        [openNavButton, openNavMobileButton, openSectionButton].forEach(btn => {
+            if (btn) btn.addEventListener('click', openContactModal);
+        });
+
+        if (closeContactModalButton) {
+            closeContactModalButton.addEventListener('click', closeContactModal);
+        }
+
+        contactModal.addEventListener('click', (e) => {
+            if (e.target === contactModal) closeContactModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !contactModal.classList.contains('hidden')) {
+                closeContactModal();
+            }
+        });
+
+    }); // Koniec głównego DOMContentLoaded
+    </script>
+
+    <!-- Modal dla Projektów -->
+    <div id="project-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center transition-colors duration-300">
+        <div id="modal-content-container" class="relative bg-light-surface dark:bg-dark-surface rounded-xl shadow-2xl transition-all duration-300 ease-out flex flex-col" style="will-change: transform, opacity, width, height;">
+            <div id="modal-content" class="p-8 overflow-y-auto">
+                <h2 id="modal-title" class="gradient-text text-2xl font-bold"></h2>
+                <div id="modal-inner-content"></div>
+            </div>
+            <button id="close-modal-button" class="absolute top-4 right-4 text-light-text-body dark:text-dark-text-body hover:text-brand-primary dark:hover:text-brand-primary-dark transition-colors">&times;</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- KONFIGURACJA PRZEWIJANIA ---
+            // Domyślna wartość offsetu, jeśli link nie ma własnej.
+            const defaultScrollOffset = 80;
+
+            // Funkcja do obsługi płynnego przewijania
+            const smoothScrollHandler = function(e) {
+                e.preventDefault();
+                const link = e.currentTarget;
+                const targetId = link.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+
+                if (targetSection) {
+                    // Odczytaj indywidualny offset z atrybutu data-scroll-offset lub użyj domyślnego
+                    const customOffset = link.getAttribute('data-scroll-offset');
+                    const scrollOffset = customOffset !== null ? parseInt(customOffset, 10) : defaultScrollOffset;
+
+                    // Upewnij się, że sekcja jest widoczna przed przewinięciem
+                    if (targetSection.classList.contains('section-hidden')) {
+                        targetSection.classList.remove('section-hidden');
+                        targetSection.classList.add('visible');
+                    }
+
+                    // Oblicz pozycję docelową z uwzględnieniem offsetu
+                    const targetPosition = targetSection.getBoundingClientRect().top + window.pageYOffset - scrollOffset;
+
+                    // Płynne przewijanie
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+
+                    // Zamknij menu mobilne po kliknięciu (jeśli jest otwarte)
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            };
+
+            // Dodaj obsługę do wszystkich linków, które mają przewijać stronę
+            const scrollLinks = document.querySelectorAll('a[href^="#"]');
+            scrollLinks.forEach(link => {
+                // Upewnijmy się, że cel linku istnieje na stronie
+                if (link.getAttribute('href') === '#' || document.querySelector(link.getAttribute('href'))) {
+                    link.addEventListener('click', smoothScrollHandler);
+                }
+            });
+        });
+    </script>
+    <style>
+        .dark .tab-button-new.active {
+            background-color: transparent;
+            color: white;
+            border-bottom-color: #A855F7; /* Fioletowy */
+        }
+
+        /* Styl dla linii pod przyciskami */
+        #tab-buttons-new {
+            border-color: #A855F7; /* Fioletowy w trybie jasnym */
+        }
+        .dark #tab-buttons-new {
+            border-color: rgba(229, 231, 235, 0.2); /* Oryginalny szary w trybie ciemnym */
+        }
+    </style>
+<div id="chat-bubble" class="chat-bubble">
+  Cześć!
+  <span id="close-bubble" class="close-bubble">&times;</span>
+</div>
+
+<style>
+  .chat-bubble {
+    position: fixed;
+    bottom: 40px; /* Lekko podniesiony */
+    right: 120px; /* Większy odstęp od ikony */
+    background-color: #2d3c82; /* Jaśniejszy granatowy */
+    color: white;
+    padding: 12px 35px 12px 20px; /* Zwiększony padding po prawej */
+    border-radius: 20px;
+    border-top-right-radius: 5px; /* Skierowanie na ikonę */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    opacity: 0;
+    transform: scale(0.8);
+    transform-origin: bottom right;
+    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    z-index: 1001;
+    font-family: sans-serif;
+  }
+
+  .chat-bubble.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .close-bubble {
+    position: absolute;
+    top: 2px;   /* Lekkie obniżenie */
+    right: 10px; /* Lekkie przesunięcie w lewo */
+    cursor: pointer;
+    font-size: 24px;
+    color: #fff;
+    font-weight: bold;
+    transition: transform 0.2s;
+  }
+  .close-bubble:hover {
+      transform: scale(1.2);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+        const contactForm = document.querySelector('#contact-modal form');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const messageInput = document.getElementById('message');
+    const submitButton = contactForm.querySelector('button[type="submit"]');
+    const successMessage = document.getElementById('form-success-message');
+
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault(); // Zawsze zatrzymujemy domyślną akcję, by obsłużyć wysyłkę przez JS
+
+        let isValid = true;
+
+        // Walidacja imienia
+        if (nameInput.value.trim() === '') {
+            isValid = false;
+            nameInput.classList.add('invalid');
+        } else {
+            nameInput.classList.remove('invalid');
+        }
+
+        // Walidacja emaila
+        if (emailInput.value.trim() === '' || !/\S+@\S+\.\S+/.test(emailInput.value)) {
+            isValid = false;
+            emailInput.classList.add('invalid');
+        } else {
+            emailInput.classList.remove('invalid');
+        }
+
+        // Walidacja wiadomości
+        if (messageInput.value.trim() === '') {
+            isValid = false;
+            messageInput.classList.add('invalid');
+        } else {
+            messageInput.classList.remove('invalid');
+        }
+
+        if (isValid) {
+            const formData = {
+                name: nameInput.value.trim(),
+                email: emailInput.value.trim(),
+                message: messageInput.value.trim()
+            };
+
+            const originalButtonHTML = submitButton.innerHTML;
+            submitButton.innerHTML = 'Wysyłanie...';
+            submitButton.disabled = true;
+
+            fetch('https://growing-oarfish-grossly.ngrok-free.app/webhook-test/f661e357-8379-495e-a6e4-8337cabfc886', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Pokaż komunikat o sukcesie i ukryj formularz
+                contactForm.classList.add('hidden');
+                successMessage.classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+                submitButton.innerHTML = 'Błąd! Spróbuj ponownie.';
+            })
+            .finally(() => {
+                // Przywróć przycisk do stanu początkowego po 3 sekundach, ale nie ruszaj widoczności formularza/komunikatu
+                setTimeout(() => {
+                    submitButton.innerHTML = 'Wyślij';
+                    submitButton.disabled = false;
+                }, 3000);
+            });
+        }
+    });
+
+    // Usuwanie błędu podczas pisania
+    [nameInput, emailInput].forEach(input => {
+        input.addEventListener('input', () => {
+            if (input.classList.contains('invalid')) {
+                input.classList.remove('invalid');
+            }
+        });
+    });
+
+    const chatBubble = document.getElementById('chat-bubble');
+    const closeBubble = document.getElementById('close-bubble');
+    
+    // Funkcja otwierająca chatbota
+    function openChatbot() {
+      const chatbotButton = document.getElementById('chat-open-button');
+      if (chatbotButton) {
+        chatbotButton.click();
+      }
+      chatBubble.classList.remove('show');
+    }
+
+    // Ukryj dymek po kliknięciu w ikonę chatbota
+    const chatbotButton = document.getElementById('chat-open-button');
+    if (chatbotButton) {
+      chatbotButton.addEventListener('click', function() {
+        chatBubble.classList.remove('show');
+      });
+    }
+
+    // Pokaż dymek po 1.5 sekundach
+    setTimeout(() => {
+      chatBubble.classList.add('show');
+    }, 1500);
+
+    // Zamknij dymek po kliknięciu 'x'
+    closeBubble.addEventListener('click', function(event) {
+      event.stopPropagation(); // Zapobiega otwarciu chatbota
+      chatBubble.classList.remove('show');
+    });
+
+    // Otwórz chatbota po kliknięciu w dymek
+    chatBubble.addEventListener('click', function() {
+      openChatbot();
+    });
+  });
+</script>
+
+</body>
+</html>
