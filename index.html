@@ -1004,10 +1004,13 @@
                             .then(data => {
                                 console.log('Otrzymano odpowiedź z serwera:', data);
                                 const messageContent = typingIndicator.querySelector('.bot-message-content');
-                                if (messageContent) {
-                                    // Formatowanie JSON do czytelnej postaci wewnątrz bloku <pre>
-                                    messageContent.innerHTML = `<pre class="text-sm">${JSON.stringify(data, null, 2)}</pre>`;
-                                    typingIndicator.classList.remove('typing'); // Usuń klasę 'typing' jeśli istnieje
+                                if (data && data.respond && messageContent) {
+                                    messageContent.innerHTML = `<p>${data.respond}</p>`;
+                                    typingIndicator.classList.remove('typing');
+                                } else if (messageContent) {
+                                    // Fallback na wypadek nieoczekiwanej odpowiedzi
+                                    messageContent.innerHTML = `<p>Otrzymano nieoczekiwaną odpowiedź.</p>`;
+                                    typingIndicator.classList.remove('typing');
                                 }
                             })
                             .catch(error => {
