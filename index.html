@@ -1303,9 +1303,7 @@
             closeContactModalButton.addEventListener('click', closeContactModal);
         }
 
-        contactModal.addEventListener('click', (e) => {
-            if (e.target === contactModal) closeContactModal();
-        });
+        // Usunięto funkcjonalność zamykania modala po kliknięciu w tło, zgodnie z prośbą użytkownika.
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && !contactModal.classList.contains('hidden')) {
