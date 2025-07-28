@@ -1001,8 +1001,8 @@
                             })
                             .then(data => {
                                 console.log('Otrzymano odpowiedź z serwera:', data);
-                                if (data && data.message) {
-                                    displayMessage(data.message, 'bot');
+                                if (data && data.respond) {
+                                    displayMessage(data.respond, 'bot');
                                 }
                             })
                             .catch(error => {
